@@ -1,0 +1,2 @@
+Para iniciar o projeto deve-se dar o comando go mod init webapp
+adicionamos o pacote go get github.com/gorilla/mux
