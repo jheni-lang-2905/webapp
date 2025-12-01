@@ -1,11 +1,11 @@
-$('#formulario-cadastro').on('submit', criarUsuario)
+$('#formulario-cadastro').on('submit', criarUsuario);
 
 function criarUsuario(evento){
     evento.preventDefault();
-    console.log("Dentro da funcao do usuario")
+    console.log("Dentro da funcao do usuario");
 
-    if($('#senha').val != $('#confirmar-senha').val){
-        alert("As senhas não coincidem")
+    if($('#senha').val() !== $('#confirmar-senha').val()){
+        alert("As senhas não coincidem");
         return;
     }
 
@@ -13,10 +13,10 @@ function criarUsuario(evento){
         url: "/usuarios",
         method: "POST",
         data: {
-            nome: $('#nome').val,
-            email: $('#email').val,
-            nick: $('#nick').val,
-            senha: $('#senha').val
+            nome: $('#nome').val(),
+            email: $('#email').val(),
+            nick: $('#nick').val(),
+            senha: $('#senha').val()
         }
     })
 }
