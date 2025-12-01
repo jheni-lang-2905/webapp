@@ -3,33 +3,32 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"webapp/src/responses"
 )
 
-func CriarUsuario(w http.ResponseWriter, r *http.Request) {
+func FazerLogin(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	usuario, err := json.Marshal(map[string]string{
-		"nome":  r.FormValue("nome"),
 		"email": r.FormValue("email"),
-		"nick":  r.FormValue("nick"),
 		"senha": r.FormValue("senha"),
 	})
-
 	if err != nil {
 		responses.JSON(w, http.StatusBadRequest, responses.ErroApi{Erro: err.Error()})
-	}
-	response, err := http.Post("http://localhost:8080/usuarios", "application/json", bytes.NewBuffer(usuario))
-	if err != nil {
-		responses.JSON(w, http.StatusInternalServerError, responses.ErroApi{Erro: err.Error()})
-	}
-
-	defer response.Body.Close()
-
-	if response.StatusCode >= 400 {
-		responses.TratarStatusCodeDeErro(w, response)
 		return
 	}
-	responses.JSON(w, response.StatusCode, nil)
+
+	response, err := http.Post("http://localhost:8080/login", "application/json", bytes.NewBuffer(usuario))
+
+	if err != nil {
+		responses.JSON(w, http.StatusInternalServerError, responses.ErroApi{Erro: err.Error()})
+		return
+	}
+
+	token, _ := ioutil.ReadAll(response.Body)
+
+	fmt.Println(response.StatusCode, string(token))
 }
