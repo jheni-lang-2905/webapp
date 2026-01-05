@@ -1,6 +1,6 @@
 package models
 
 type DadosAutenticacao struct {
-	ID    string `json:"id"`
+	Id    string `json:"id"`
 	Token string `json:"token"`
 }

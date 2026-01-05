@@ -1,18 +1,26 @@
-$('#login').on('submit', fazerLogin);
+document.querySelector('#login').addEventListener('submit', fazerLogin);
 
-function fazerLogin(evento){
+async function fazerLogin(evento) {
     evento.preventDefault();
 
-    $.ajax({
-        url: "/login",
-        method: "POST",
-        data: {
-            email: $('email').val(),
-            senha: $('senha').val(),
+    const email = document.querySelector('#email').value;
+    const senha = document.querySelector('#senha').value;
+
+    try {
+        const resposta = await fetch("/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, senha })
+        });
+
+        if (resposta.ok) {
+            window.location.href = "/home";
+        } else {
+            Swal.fire("Ops...", "Usuário ou senha incorretos!", "error");
         }
-    }).done(function(){
-        window.location = "/home";
-    }).fail(function(){
-        alert("Usuario ou senha inválidos");
-    });
+    } catch (erro) {
+        Swal.fire("Erro", "Não foi possível conectar ao servidor!", "error");
+    }
 }

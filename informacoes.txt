@@ -1,2 +1,6 @@
 Para iniciar o projeto deve-se dar o comando go mod init webapp
 adicionamos o pacote go get github.com/gorilla/mux
+pacote instalado para dependencia do carregamento das variaveis go get github.com/joho/godotenv
+lembrando que esse godotenv serve para ler o arquivo .env
+instalar o pacote go get github.com/gorilla/securecookie para a configuração do cookies da aplicação web
+devbook https://github.com/OtavioGallego/DevBook
