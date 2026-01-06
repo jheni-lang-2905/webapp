@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"webapp/src/config"
 	"webapp/src/responses"
+	"webapp/src/utils"
 )
 
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
@@ -36,4 +37,9 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responses.JSON(w, response.StatusCode, nil)
+}
+
+// carrega pagina principal com as publicacoes
+func CarregarPaginaPrincipal(w http.ResponseWriter, r *http.Request) {
+	utils.ExecutarTemplate(w, "home,html", nil)
 }
