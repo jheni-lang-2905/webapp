@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"webapp/src/config"
+	"webapp/src/cookies"
 	"webapp/src/models"
 	"webapp/src/requisicoes"
 	"webapp/src/responses"
@@ -34,6 +36,14 @@ func CarregarPaginaDeCadastroDeUsuario(w http.ResponseWriter, r *http.Request) {
 		responses.JSON(w, http.StatusUnprocessableEntity, responses.ErroApi{Erro: err.Error()})
 		return
 	}
+	cookie, _ := cookies.Ler(r)
+	usuarioID, _ := strconv.ParseUint(cookie["id"], 10, 64)
 
-	utils.ExecutarTemplate(w, "cadastro.html", publicacoes)
+	utils.ExecutarTemplate(w, "cadastro.html", struct {
+		Publicacoes []models.Publicacao
+		UsuarioID   uint64
+	}{
+		Publicacoes: publicacoes,
+		UsuarioID:   usuarioID,
+	})
 }
