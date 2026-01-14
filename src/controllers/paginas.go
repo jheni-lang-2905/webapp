@@ -16,6 +16,11 @@ import (
 )
 
 func CarregarTelaDeLogin(w http.ResponseWriter, r *http.Request) {
+	cookie, _ := cookies.Ler(r)
+	if cookie["token"] != "" {
+		http.Redirect(w, r, "/home", 302)
+		return
+	}
 	utils.ExecutarTemplate(w, "login.html", nil)
 }
 
@@ -42,6 +47,39 @@ func CarregarPaginaDeCadastroDeUsuario(w http.ResponseWriter, r *http.Request) {
 	usuarioID, _ := strconv.ParseUint(cookie["id"], 10, 64)
 
 	utils.ExecutarTemplate(w, "cadastro.html", struct {
+		Publicacoes []models.Publicacao
+		UsuarioID   uint64
+	}{
+		Publicacoes: publicacoes,
+		UsuarioID:   usuarioID,
+	})
+}
+
+// CarregarPaginaPrincipal carrega a página principal com as publicações
+func CarregarPaginaPrincipal(w http.ResponseWriter, r *http.Request) {
+	url := fmt.Sprintf("%s/publicacoes", config.APIURL)
+	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodGet, url, nil)
+	if erro != nil {
+		responses.JSON(w, http.StatusInternalServerError, responses.ErroApi{Erro: erro.Error()})
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		responses.TratarStatusCodeDeErro(w, response)
+		return
+	}
+
+	var publicacoes []models.Publicacao
+	if erro = json.NewDecoder(response.Body).Decode(&publicacoes); erro != nil {
+		responses.JSON(w, http.StatusUnprocessableEntity, responses.ErroApi{Erro: erro.Error()})
+		return
+	}
+
+	cookie, _ := cookies.Ler(r)
+	usuarioID, _ := strconv.ParseUint(cookie["id"], 10, 64)
+
+	utils.ExecutarTemplate(w, "home.html", struct {
 		Publicacoes []models.Publicacao
 		UsuarioID   uint64
 	}{
