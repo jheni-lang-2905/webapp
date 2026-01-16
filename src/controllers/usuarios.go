@@ -5,8 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"webapp/src/config"
+	"webapp/src/requisicoes"
 	"webapp/src/responses"
+
+	"github.com/gorilla/mux"
 )
 
 func CriarUsuario(w http.ResponseWriter, r *http.Request) {
@@ -35,5 +39,58 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		responses.TratarStatusCodeDeErro(w, response)
 		return
 	}
+	responses.JSON(w, response.StatusCode, nil)
+}
+
+// parar de seguir usuarios
+func PararDeSeguirUsuario(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+	usuarioID, err := strconv.ParseUint(parametros["usuarioId"], 10, 64)
+	if err != nil {
+		responses.JSON(w, http.StatusBadRequest, responses.ErroApi{Erro: err.Error()})
+		return
+	}
+
+	url := fmt.Sprintf("%s/usuarios/%d/parar-de-seguir", config.APIURL, usuarioID)
+
+	response, err := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodPost, url, nil)
+	if err != nil {
+		responses.JSON(w, http.StatusInternalServerError, responses.ErroApi{Erro: err.Error()})
+		return
+	}
+
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		responses.TratarStatusCodeDeErro(w, response)
+		return
+	}
+
+	responses.JSON(w, response.StatusCode, nil)
+}
+
+func SeguirUsuario(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+	usuarioID, err := strconv.ParseUint(parametros["usuarioId"], 10, 64)
+	if err != nil {
+		responses.JSON(w, http.StatusBadRequest, responses.ErroApi{Erro: err.Error()})
+		return
+	}
+
+	url := fmt.Sprintf("%s/usuarios/%d/seguir", config.APIURL, usuarioID)
+
+	response, err := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodPost, url, nil)
+	if err != nil {
+		responses.JSON(w, http.StatusInternalServerError, responses.ErroApi{Erro: err.Error()})
+		return
+	}
+
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		responses.TratarStatusCodeDeErro(w, response)
+		return
+	}
+
 	responses.JSON(w, response.StatusCode, nil)
 }
