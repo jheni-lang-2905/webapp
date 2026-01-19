@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"webapp/src/config"
+	"webapp/src/cookies"
 	"webapp/src/requisicoes"
 	"webapp/src/responses"
 
@@ -93,4 +94,20 @@ func SeguirUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responses.JSON(w, response.StatusCode, nil)
+}
+
+func EditarUsuario(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	usuario, err := json.Marshal(map[string]string{
+		"nome":  r.FormValue("nome"),
+		"nick":  r.FormValue("nick"),
+		"email": r.FormValue("email"),
+	})
+	if err != nil {
+		responses.JSON(w, http.StatusBadRequest, responses.ErroApi{Erro: err.Error()})
+		return
+	}
+
+	cookie, _ := cookies.Ler(r)
+	usuarioID, _ := strconv.ParseUint(cookie["id"], 10, 64)
 }

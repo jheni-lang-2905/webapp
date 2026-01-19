@@ -159,14 +159,20 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	cookie, _ := cookies.Ler(r)
+	usuarioLogadoId, _ := strconv.ParseUint(cookie["id"], 10, 64)
+
+	if usuarioID == usuarioLogadoId {
+		http.Redirect(w, r, "/perfil", 302)
+		return
+	}
+
 	usuario, err := models.BuscarUsuarioCompleto(usuarioID, r)
 	if err != nil {
 		responses.JSON(w, http.StatusInternalServerError, responses.ErroApi{Erro: err.Error()})
 		return
 	}
 
-	cookie, _ := cookies.Ler(r)
-	usuarioLogadoId, _ := strconv.ParseUint(cookie["id"], 10, 64)
 	utils.ExecutarTemplate(w, "usuario.html", struct {
 		Usuario         models.Usuario
 		UsuarioLogadoId uint64
@@ -174,4 +180,30 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 		Usuario:         usuario,
 		UsuarioLogadoId: usuarioLogadoId,
 	})
+}
+
+func CarregarPerfilDoUsuariosLogado(w http.ResponseWriter, r *http.Request) {
+	cookies, _ := cookies.Ler(r)
+	usuarioID, err := strconv.ParseUint(cookies["Id"], 10, 64)
+	usuario, err := models.BuscarUsuarioCompleto(usuarioID, r)
+	if err != nil {
+		responses.JSON(w, http.StatusInternalServerError, responses.ErroApi{Erro: err.Error()})
+		return
+	}
+	utils.ExecutarTemplate(w, "perfil.html", usuario)
+}
+
+func CarregarPerfilDeEdicaoDeUsuario(w http.ResponseWriter, r *http.Request) {
+	cookies, _ := cookies.Ler(r)
+	usuarioID, _ := strconv.ParseUint(cookies["Id"], 10, 64)
+
+	canal := make(chan models.Usuario)
+	go models.BuscarDadosDoUsuario(canal, usuarioID, r)
+	usuario := <-canal
+	if usuario.ID == 0 {
+		responses.JSON(w, http.StatusInternalServerError, responses.ErroApi{Erro: "Erro ao buscar usuario"})
+		return
+	}
+
+	utils.ExecutarTemplate(w, "editar-usuario.html", usuario)
 }

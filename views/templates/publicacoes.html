@@ -16,7 +16,7 @@
 {{ define "cabecalho-publicacao"}}
     <h1 class="display-4">{{ .Titulo }}</h1>
     <p class="lead">{{ .Conteudo }}</p>
-    <a href="#">{{ .AutorNick }} - {{ CriadaEm.Format "02/01/2006 3:4" }}</a>
+    <a href="/usuarios/{{ .AutorID }}">{{ .AutorNick }} - {{ CriadaEm.Format "02/01/2006 3:4" }}</a>
     <!--
         Jan 2 15:04:05 2006 //data referência do golang
         1(mês) 2(dia) 3(hora) 4(minutos) 5(segundo) 6(ano)
