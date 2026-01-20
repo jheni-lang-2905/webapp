@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualiza senha</title>
+    <link href="/assets/css/bootstrap.css" rel="stylesheet" />
+</head>
+
+<body>
+    {{ template "cabecalho" }}
+    
+    <div class="container-fluid">
+        <div class="row mt-4">
+            <h3>Atualizar senha</h3>
+            <form id="atualizar-senha">
+                <div class="form-group">
+                    <label for="senha-atual">Senha atual</label>
+                    <input type="password" class="form-control" id="senha-atual" name="senha-atual"
+                    placeholder="Insira a sua senha atual" required="required">
+                </div>
+                <div class="form-group">
+                    <label for="nova-senha">nova senha</label>
+                    <input type="password" class="form-control" id="nova-senha" name="nova-senha"
+                    placeholder="Insira nova senha" required="required">
+                </div>
+                 <div class="form-group">
+                    <label for="confirmar-senha">Confirmar senha</label>
+                    <input type="password" class="form-control" id="confirmar-senha" name="confirmar-senha"
+                    placeholder="confirme nova senha" required="required">
+                </div>
+                <button class="btn btn-info" type="submit">Atualizar senha</button>
+            </form>
+        </div>
+    </div>
+
+    {{ temaplate "rodape" }}
+    {{ template "scripts" }}
+    <script src="/assets/js/usuario.js"></script>
+</body>
+</html>
